@@ -24,6 +24,15 @@ task generateXtextLanguage(type: JavaExec) {
 	args += "rootPath=/${projectDir}/.."
 }
 
+sourceSets {
+    main {
+        resources {
+            srcDirs = ['src/main/resources', 'src/main/xtext-gen','src/main/java']
+            exclude '*.xtend'
+        }
+    }
+}
+
 clean {
 	delete 'model'
 

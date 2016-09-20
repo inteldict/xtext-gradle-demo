@@ -23,6 +23,10 @@ Workflow {
 			name = "eu.metatools.util.featurelogic.term.Term"
 			fileExtensions = "flt"
 
+			formatter = {
+            	generateStub = true
+            }
+
 			serializer = {
 				generateStub = false
 			}

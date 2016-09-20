@@ -14,7 +14,6 @@ var runtimeProject = "../${projectName}"
 
 Workflow {
 
-    //Seems to be ignored
     bean = StandaloneSetup {
         scanClassPath = true
         registerGeneratedEPackage = "eu.metatools.util.featurelogic.term.term.TermPackage"
