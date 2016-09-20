@@ -1,0 +1,33 @@
+buildscript {
+	repositories {
+		jcenter()
+	}
+
+	dependencies {
+		classpath 'org.xtext:xtext-gradle-plugin:1.0.2'
+	}
+}
+
+subprojects {
+	ext.xtextVersion = '2.10.0'
+	repositories {
+		jcenter()
+	}
+    buildDir = new File(rootProject.projectDir, "build/")
+	apply plugin: 'java'
+	apply plugin: 'org.xtext.xtend'
+	apply from: "../gradle/source-layout.gradle"
+	apply from: "../gradle/maven-deployment.gradle"
+	apply plugin: 'eclipse'
+	apply plugin: 'idea'
+	
+	group = 'eu.metatools.util.featurelogic.term'
+	version = '1.0.0-SNAPSHOT'
+	
+	sourceCompatibility = '1.8'
+	targetCompatibility = '1.8'
+	
+	configurations.all {
+		exclude group: 'asm'
+	}
+}

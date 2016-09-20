@@ -1,0 +1,46 @@
+sourceSets {
+	main {
+		java.srcDirs = ['src/main/java', 'src/main/xtext-gen']
+		resources.srcDirs = ['src/main/resources', 'src/main/xtext-gen']
+		xtendOutputDir = 'src/main/xtend-gen'
+	}
+	test {
+		java.srcDirs = ['src/test/java', 'src/test/xtext-gen']
+		resources.srcDirs = ['src/test/resources', 'src/test/xtext-gen']
+		xtendOutputDir = 'src/test/xtend-gen'
+	}
+}
+
+jar {
+	from('model') {
+		into('model')
+	}
+	manifest {
+		attributes 'Bundle-SymbolicName': project.name
+		attributes 'Bundle-ManifestVersion': 2
+		attributes 'Bundle-Name': project.name
+		attributes 'Bundle-RequiredExecutionEnvironment': 'JavaSE-1.8'
+		attributes 'Require-Bundle': 'eu.metatools.util.featurelogic.term;bundle-version="1.0.0"'
+//		attributes 'Export-Package': "co3.lscript,\n" +
+//				"co3.lscript.formatting,\n" +
+//				"co3.lscript.generator,\n" +
+//				"co3.lscript.scoping,\n" +
+//				"co3.lscript.validation,\n" +
+//				"co3.lscript.services,\n" +
+//				"co3.lscript.linearisationScript,\n" +
+//				"co3.lscript.linearisationScript.impl,\n" +
+//				"co3.lscript.linearisationScript.util,\n" +
+//				"co3.lscript.serializer,\n" +
+//				"co3.lscript.parser.antlr,\n" +
+//				"co3.lscript.parser.antlr.internal"
+
+	}
+}
+
+plugins.withId('war') {
+	webAppDirName = "src/main/webapp"
+}
+
+plugins.withId('org.xtext.idea-plugin') {
+	assembleSandbox.metaInf.from('src/main/resources/META-INF')
+}

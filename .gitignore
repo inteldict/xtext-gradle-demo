@@ -1,0 +1,29 @@
+*.class
+
+# Mobile Tools for Java (J2ME)
+.mtj.tmp/
+
+# Package Files #
+*.jar
+*.war
+*.ear
+*.min*.js
+*.min*.css
+
+#special for Mac Os
+*.DS_Store
+
+# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+hs_err_pid*
+
+# custom directories
+node_modules
+index
+target/*
+classes/*
+deploy/*
+build/*
+.idea/
+.gradle/
+inteldict.iml
+

@@ -1,0 +1,43 @@
+buildscript {
+    repositories {
+		jcenter()
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+
+    }
+    dependencies {
+        classpath "org.xtext:xtext-gradle-plugin:1.0.12"
+//		classpath "eu.metatools.util.featurelogic.term:eu.metatools.util.featurelogic.term:1.0.0-SNAPSHOT"
+    }
+}
+
+
+subprojects {
+	ext.xtextVersion = '2.10.0'
+	repositories {
+		jcenter()
+        flatDir {
+            dirs "../../../eu.metatools.util.featurelogic.term/eu.metatools.util.featurelogic.term.parent/build/libs/"
+        }
+	}
+	buildDir = new File(rootProject.projectDir, "build/")
+	apply plugin: 'java'
+	apply plugin: 'org.xtext.xtend'
+//	apply from: "${rootDir}/gradle/source-layout.gradle"
+	apply from: "../gradle/source-layout.gradle"
+//	apply from: "${rootDir}/gradle/maven-deployment.gradle"
+	apply from: "../gradle/maven-deployment.gradle"
+	apply plugin: 'eclipse'
+	apply plugin: 'idea'
+	
+	group = 'co3.linearisationScript'
+	version = '1.0.0-SNAPSHOT'
+	
+	sourceCompatibility = '1.8'
+	targetCompatibility = '1.8'
+	
+	configurations.all {
+		exclude group: 'asm'
+	}
+}

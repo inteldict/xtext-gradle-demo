@@ -1,0 +1,44 @@
+sourceSets {
+	main {
+		java.srcDirs = ['src/main/java', 'src/main/xtext-gen']
+		resources.srcDirs = ['src/main/resources', 'src/main/xtext-gen']
+		xtendOutputDir = 'src/main/xtend-gen'
+	}
+	test {
+		java.srcDirs = ['src/test/java', 'src/test/xtext-gen']
+		resources.srcDirs = ['src/test/resources', 'src/test/xtext-gen']
+		xtendOutputDir = 'src/test/xtend-gen'
+	}
+}
+
+jar {
+	from('model') {
+		into('model')
+	}
+	manifest {
+		attributes 'Bundle-SymbolicName': project.name
+		attributes 'Bundle-ManifestVersion': 2
+		attributes 'Bundle-Name': 'eu.metatools.util.featurelogic.term'
+		attributes 'Bundle-RequiredExecutionEnvironment': 'JavaSE-1.8'
+//		attributes 'Export-Package': " eu.metatools.util.featurelogic.term,\n" +
+//				" eu.metatools.util.featurelogic.term.services,\n" +
+//				" eu.metatools.util.featurelogic.term.term,\n" +
+//				" eu.metatools.util.featurelogic.term.term.impl,\n" +
+//				" eu.metatools.util.featurelogic.term.term.util,\n" +
+//				" eu.metatools.util.featurelogic.term.serializer,\n" +
+//				" eu.metatools.util.featurelogic.term.parser.antlr,\n" +
+//				" eu.metatools.util.featurelogic.term.parser.antlr.internal,\n" +
+//				" eu.metatools.util.featurelogic.term.validation,\n" +
+//				" eu.metatools.util.featurelogic.term.scoping,\n" +
+//				" eu.metatools.util.featurelogic.term.generator,\n" +
+//				" eu.metatools.util.featurelogic.term.formatting\n"
+	}
+}
+
+plugins.withId('war') {
+	webAppDirName = "src/main/webapp"
+}
+
+plugins.withId('org.xtext.idea-plugin') {
+	assembleSandbox.metaInf.from('src/main/resources/META-INF')
+}

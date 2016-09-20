@@ -1,0 +1,46 @@
+grammar eu.metatools.util.featurelogic.term.Term hidden(WS, ML_COMMENT, SL_COMMENT)
+
+generate term "http://www.metatools.eu/util/featurelogic/term/Term"
+import "http://www.eclipse.org/emf/2002/Ecore" as ecore
+
+TermGeneral returns Term:
+	'TOP' {Top} |
+	'BOTTOM' {Bottom} |
+	TermDisjunction;
+
+TermDisjunction returns Term:
+	TermConjunction ('|' {Or.list+=current} list+=TermConjunction ('|' list+=TermConjunction)*)?;
+
+TermConjunction returns Term:
+	TermNot ('&' {And.list+=current} list+=TermNot ('&' list+=TermNot)*)?;
+
+TermNot returns Term:
+	'!' {Not} it=TermTerminals
+	| TermTerminals;
+
+TermTerminals returns Term:
+	'[' TermDisjunction ']' |
+	'(' TermDisjunction ')' |
+	{Assign} key=(STRING | ID) '=' value=('*' | STRING | ID);
+
+terminal INT returns ecore::EInt:
+	('0'..'9')+;
+
+terminal ID:
+	'^'? ('a'..'z' | 'A'..'Z' | '_'|'/'|'+'| '0'..'9')+;
+
+terminal STRING:
+	'"' ('\\' ('b' | 't' | 'n' | 'f' | 'r' | 'u' | '"' | "'" | '\\') | !('\\' | '"'))* '"' |
+	"'" ('\\' ('b' | 't' | 'n' | 'f' | 'r' | 'u' | '"' | "'" | '\\') | !('\\' | "'"))* "'";
+
+terminal ML_COMMENT:
+	'/*'->'*/';
+
+terminal SL_COMMENT:
+	'//' !('\n' | '\r')* ('\r'? '\n')?;
+
+terminal WS:
+	(' ' | '\t' | '\r' | '\n')+;
+
+terminal ANY_OTHER:
+	.;

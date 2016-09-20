@@ -1,0 +1,38 @@
+subprojects {
+    apply plugin: 'java'
+//    apply plugin: 'eclipse-wtp'
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+
+    repositories {
+       mavenCentral()
+    }
+
+    dependencies {
+        testCompile 'junit:junit:4.12'
+    }
+
+    version = '1.0'
+
+    jar {
+        manifest.attributes provider: 'gradle'
+    }
+}
+
+//project(':eu.metatools.util.featurelogic') {
+//    dependencies {
+//        compile project(":eu.metatools.util.featurelogic.term:eu.metatools.util.featurelogic.term.parent")
+//    }
+//    project.ext.projVersion = '0.99.2'
+//    project.ext.projTitle = 'WebDriver on Google'
+//    task packageTests(type: Jar) {
+//        from sourceSets.test.output
+//    }
+//}
+
+//project(':co3.lscript:co3.lscript.parent') {
+//    dependencies {
+////        compile project(':eu.metatools.util.featurelogic.term:eu.metatools.util.featurelogic.term.parent')
+//        compile project(':eu.metatools.util.featurelogic.term')
+//    }
+//}

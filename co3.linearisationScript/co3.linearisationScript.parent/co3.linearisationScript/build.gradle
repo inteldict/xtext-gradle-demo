@@ -1,0 +1,46 @@
+dependencies {
+    compile "org.eclipse.xtext:org.eclipse.xtext:${xtextVersion}"
+    compile "org.eclipse.xtext:org.eclipse.xtext.xtext.generator:${xtextVersion}"
+    compile "org.eclipse.xtext:org.eclipse.xtext.generator:${xtextVersion}"
+    compile "org.eclipse.xtext:org.eclipse.xtext.xtext:${xtextVersion}"
+    compile "org.eclipse.emf:org.eclipse.emf.mwe2.launch:2.8.3"
+    compile group: 'org.eclipse.xtext', name: 'org.eclipse.xtext.xbase.lib', version:'${xtextVersion}'
+    compile "eu.metatools.util.featurelogic.term:eu.metatools.util.featurelogic.term:1.0.0-SNAPSHOT"
+}
+configurations {
+    mwe2 {
+        extendsFrom compile
+    }
+}
+
+dependencies {
+      mwe2 "eu.metatools.util.featurelogic.term:eu.metatools.util.featurelogic.term:1.0.0-SNAPSHOT"
+}
+
+task generateXtextLanguage(type: JavaExec) {
+	main = 'org.eclipse.emf.mwe2.launch.runtime.Mwe2Launcher'
+	classpath = configurations.mwe2
+    println classpath.allDependencies
+	inputs.file "src/main/java/co3/lscript/GenerateLinearisationScript.mwe2"
+	inputs.file "src/main/java/co3/lscript/LinearisationScript.xtext"
+	outputs.dir "src/main/xtext-gen"
+	args += "src/main/java/co3/lscript/GenerateLinearisationScript.mwe2"
+	args += "-p"
+	args += "rootPath=/${projectDir}/.."
+}
+
+clean {
+    delete 'model'
+
+    delete 'src/main/xtext-gen'
+    delete 'src/main/xtend-gen'
+    delete 'src/main/java-gen'
+
+    delete 'src/test/xtext-gen'
+    delete 'src/test/xtend-gen'
+    delete 'src/test/java-gen'
+}
+
+generateXtext.dependsOn(generateXtextLanguage)
+clean.dependsOn(cleanGenerateXtextLanguage)
+eclipse.classpath.plusConfigurations += [configurations.mwe2]

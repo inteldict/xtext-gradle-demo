@@ -1,0 +1,105 @@
+grammar co3.lscript.LinearisationScript with eu.metatools.util.featurelogic.term.Term
+
+generate linearisationScript "http://www.LinearisationScript"
+import "http://www.metatools.eu/util/featurelogic/term/Term"
+import "http://www.eclipse.org/emf/2002/Ecore" as ecore
+
+Model:
+	(methodes+=Procedure | entries+=Entry)*;
+
+Entry:
+	'start' phase=INT procedure=[Procedure] ';';
+
+Procedure returns Procedure:
+	'procedure' name=ID '{' statement=SExpr1 '}';
+
+SExpr:	SExpr1;
+
+// Sequence
+SExpr1 returns SExpr:
+	SExpr2 ({SExprSequence.list+=current} list+=SExpr2)*;
+
+SExpr2 returns SExpr:
+	// If
+	{SExprIf} "if" "(" condition=BExpr => ")" "{" statement=SExpr "}" ("else" "{" elseStatement=SExpr "}")?
+	// Optional
+	| {SExprOptional} "?" "{" statement=SExpr "}" ("else" "{" elseStatement=SExpr "}")?
+	// SetDnf
+	// Removed:| {SExprSetDnf} node=NExpr "=" feature=DExpr ";"
+	// Set with union
+	// Removed:| {SExprSetDnfPlus} node=NExpr "+=" feature=DExpr ";"
+	// Set with union
+	| {SExprSetDnfUnion} node=NExpr "U=" feature=DExpr ";"
+	// Set with symmetric difference
+	// Removed:| {SExprSetDnfSymDiff} node=NExpr "-=" feature=DExpr ";"
+	// Set with intersection
+	// Removed:| {SExprSetDnfIntersect} node=NExpr "I=" feature=DExpr ";"
+	// Set line
+	//| {SExprSetLine} node=NExpr "L=" to=NExpr ";"
+	// Error
+	// Removed:| {SExprError} "ERROR" ";"
+	// Debug
+	| {SExprDebug} "DEBUG" message=STRING (out=DExpr)? ";"
+	// Break
+	// Removed:| {SExprBreak} "BREAK" ";"
+	| {SExprDo} "do" method=[Procedure] ";"
+	// Drop
+	| {SExprDrop} 'drop' ';'
+	// Special
+	//| {SExprDefinition} 'definition' (optional?='?')? node=NExpr ':' feature=DExpr ';'
+	| {SExprDefinition} 'definition' cexpr=CExpr ';'
+	// Promotion
+	| {SExprPromotion} 'promotion' ';'
+	//
+	| "{" SExpr "}";
+
+CExpr:
+	access=DefinitionAccess feature=DExpr (cexpr=CExpr)?;
+
+enum DefinitionAccess:
+	FORCEONE=":" | FORCEALL=":>" | OPTIONALONE="?" | OPTIONALALL="?>" | POSSIBLYONE="~" | POSSIBLYALL="~>";
+
+NExpr:
+	NExpr1;
+
+NExpr1 returns NExpr:
+	{NContext} "self" (query=NExpr2)?;
+
+NExpr2 returns NExpr:
+	(({NUp} '.' 'up') | ({NDown} '.' 'down') | ({NLine} '.' 'line') | ({NSelector} selector=DExpr)) (query=NExpr2)?;
+
+DExpr:
+	DExpr1;
+
+DExpr1 returns DExpr:
+	DExpr2 ("U" {DExprUnion.list+=current} list+=DExpr2)*;
+
+DExpr2 returns DExpr:
+	DExpr3 ("I" {DExprIntersect.list+=current} list+=DExpr3)*;
+
+DExpr3 returns DExpr:
+	DExpr4 ("+" {DExprPlus.list+=current} list+=DExpr4)*;
+
+DExpr4 returns DExpr:
+	DExpr5 ("-" {DExprSymDiff.list+=current} list+=DExpr5)*;
+
+DExpr5 returns DExpr:
+	("R" DExpr {DExprReduce.dnf=current}) | ({DExprDnf} term=FExpr) | ("line" {DExprSlot} slot=ID) | "(" DExpr ")" |
+	({DExprLookup} navigation=NExpr);
+
+FExpr returns Term:
+	TermGeneral;
+
+BExpr:
+	BExpr1;
+
+BExpr1 returns BExpr:
+	BExpr2 ("&" {BExprAnd.list+=current} list+=BExpr2)*;
+
+BExpr2 returns BExpr:
+	BExpr3 ("|" {BExprOr.list+=current} list+=BExpr3)*;
+
+BExpr3 returns BExpr:
+	"!" {BExprNot} i=BExpr1 | "(" BExpr => ")" | {BExprTrue} "true" | {BExprFalse} "false" | DExpr "=="
+	{BExprDNFEquals.left=current} right=DExpr | DExpr "=U=" {BExprDNFUnifys.left=current} right=DExpr | 'root'
+	{BExprRoot} | 'leaf' {BExprLeaf};
